@@ -1,0 +1,65 @@
+To get a list of installed software on a Windows system, you can use the Windows Registry, which stores information about installed programs. The relevant information is typically found in the Windows Registry under the HKEY_LOCAL_MACHINE\SOFTWARE and HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node keys. Be aware that accessing the Windows Registry requires administrative privileges.
+
+Here is a simplified example in C++ to retrieve a list of installed software from the Registry:
+
+cpp
+Copy code
+#include <windows.h>
+#include <iostream>
+
+int main() {
+    HKEY hKey;
+    LONG result;
+
+    // Open the Registry key where software information is stored
+    result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", 0, KEY_READ | KEY_WOW64_32KEY, &hKey);
+    
+    if (result != ERROR_SUCCESS) {
+        std::cerr << "Error opening Registry key." << std::endl;
+        return 1;
+    }
+
+    // Enumerate the subkeys (installed software) under the Uninstall key
+    DWORD index = 0;
+    WCHAR subkeyName[255];
+    DWORD subkeyNameSize = sizeof(subkeyName);
+
+    while (RegEnumKeyEx(hKey, index, subkeyName, &subkeyNameSize, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
+        HKEY subkey;
+        WCHAR displayName[255];
+        DWORD displayNameSize = sizeof(displayName);
+
+        // Open the subkey for reading
+        result = RegOpenKeyEx(hKey, subkeyName, 0, KEY_READ | KEY_WOW64_32KEY, &subkey);
+
+        if (result == ERROR_SUCCESS) {
+            // Get the display name of the software
+            result = RegQueryValueEx(subkey, L"DisplayName", NULL, NULL, (LPBYTE)displayName, &displayNameSize);
+
+            if (result == ERROR_SUCCESS) {
+                // Print the display name of the software
+                std::wcout << displayName << std::endl;
+            }
+
+            // Close the subkey
+            RegCloseKey(subkey);
+        }
+
+        index++;
+        subkeyNameSize = sizeof(subkeyName);
+    }
+
+    // Close the main key
+    RegCloseKey(hKey);
+
+    return 0;
+}
+In this code:
+
+We open the Registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, which contains information about installed software.
+
+We enumerate the subkeys (which represent installed software) under the Uninstall key.
+
+For each subkey, we open it, retrieve the DisplayName value, and print it. The DisplayName value typically contains the name of the installed software.
+
+Please note that this is a simplified example and doesn't cover all possible variations in software installation and uninstallation. Some software may store information in different Registry locations or may use other methods for installation tracking. Additionally, working with the Windows Registry requires administrative privileges, so you should handle error cases and permissions accordingly.

@@ -1,0 +1,26 @@
+In C++, you can use the Windows API to detect whether a keyboard is present on the system. Here's a basic example of how you can check for the presence of a keyboard using the Windows API:
+
+cpp
+Copy code
+#include <windows.h>
+
+int main() {
+    if (GetRawInputDeviceList(nullptr, nullptr, nullptr) == 0) {
+        // No keyboard detected
+        printf("No keyboard detected on the system.\n");
+    } else {
+        // Keyboard detected
+        printf("A keyboard is present on the system.\n");
+    }
+
+    return 0;
+}
+In this example:
+
+We use the GetRawInputDeviceList function from the Windows API to retrieve a list of raw input devices.
+
+If the function returns 0, it means that no raw input devices (including keyboards) were found, indicating that there is no keyboard present.
+
+If the function returns a value greater than 0, it means that at least one raw input device is present, indicating the presence of a keyboard or other input devices.
+
+Please note that this method checks for the presence of input devices in general, and not specifically for keyboards. If you want to determine the type of input devices present (e.g., whether it's a physical keyboard or another type of input device), you would need to further analyze the device information obtained through the GetRawInputDeviceList function.

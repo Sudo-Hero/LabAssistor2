@@ -1,0 +1,115 @@
+Retrieving icons associated with installed software involves using the Windows API to access the icon resources or image files associated with the software's executable files. Here is a simplified example of how you can retrieve icons for installed software in C++:
+
+cpp
+Copy code
+#include <windows.h>
+#include <iostream>
+#include <vector>
+
+// Function to retrieve the icon for a file or executable
+HICON GetFileIcon(const wchar_t* filePath) {
+    SHFILEINFO fileInfo;
+    if (SHGetFileInfo(filePath, 0, &fileInfo, sizeof(fileInfo), SHGFI_ICON | SHGFI_LARGEICON)) {
+        return fileInfo.hIcon;
+    }
+    return nullptr;
+}
+
+// Function to retrieve the list of installed software and their icons
+std::vector<std::pair<std::wstring, HICON>> GetInstalledSoftwareListWithIcons() {
+    std::vector<std::pair<std::wstring, HICON>> softwareList;
+    HKEY hKey;
+    LONG result;
+
+    // Open the Registry key where software information is stored
+    result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", 0, KEY_READ | KEY_WOW64_32KEY, &hKey);
+
+    if (result != ERROR_SUCCESS) {
+        std::cerr << "Error opening Registry key." << std::endl;
+        return softwareList;
+    }
+
+    // Enumerate the subkeys (installed software) under the Uninstall key
+    DWORD index = 0;
+    WCHAR subkeyName[255];
+    DWORD subkeyNameSize = sizeof(subkeyName);
+
+    while (RegEnumKeyEx(hKey, index, subkeyName, &subkeyNameSize, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
+        HKEY subkey;
+        WCHAR displayName[255];
+        DWORD displayNameSize = sizeof(displayName);
+
+        // Open the subkey for reading
+        result = RegOpenKeyEx(hKey, subkeyName, 0, KEY_READ | KEY_WOW64_32KEY, &subkey);
+
+        if (result == ERROR_SUCCESS) {
+            // Get the display name of the software
+            result = RegQueryValueEx(subkey, L"DisplayName", NULL, NULL, (LPBYTE)displayName, &displayNameSize);
+
+            if (result == ERROR_SUCCESS) {
+                // Get the executable path of the software (you may need to modify this to handle different cases)
+                WCHAR installLocation[MAX_PATH];
+                DWORD installLocationSize = sizeof(installLocation);
+                if (RegQueryValueEx(subkey, L"InstallLocation", NULL, NULL, (LPBYTE)installLocation, &installLocationSize) != ERROR_SUCCESS) {
+                    // If InstallLocation is not found, use the UninstallString
+                    installLocationSize = sizeof(installLocation);
+                    if (RegQueryValueEx(subkey, L"UninstallString", NULL, NULL, (LPBYTE)installLocation, &installLocationSize) != ERROR_SUCCESS) {
+                        // If neither is found, skip this entry
+                        continue;
+                    }
+                }
+
+                // Construct the full path to the executable
+                std::wstring executablePath = installLocation;
+                if (!executablePath.empty() && executablePath.back() != L'\\') {
+                    executablePath += L'\\';
+                }
+                executablePath += L"uninstall.exe"; // Modify this to match the actual executable name
+
+                // Get the icon for the executable
+                HICON icon = GetFileIcon(executablePath.c_str());
+
+                // Add the software name and icon to the list
+                softwareList.push_back(std::make_pair(displayName, icon));
+            }
+
+            // Close the subkey
+            RegCloseKey(subkey);
+        }
+
+        index++;
+        subkeyNameSize = sizeof(subkeyName);
+    }
+
+    // Close the main key
+    RegCloseKey(hKey);
+
+    return softwareList;
+}
+
+int main() {
+    // Retrieve the list of installed software and their icons
+    std::vector<std::pair<std::wstring, HICON>> softwareListWithIcons = GetInstalledSoftwareListWithIcons();
+
+    // Display the software names and icons (you need to implement this part)
+
+    // Clean up the icons
+    for (auto& pair : softwareListWithIcons) {
+        if (pair.second != nullptr) {
+            DestroyIcon(pair.second);
+        }
+    }
+
+    return 0;
+}
+In this code:
+
+The GetFileIcon function retrieves the icon associated with a file or executable using the SHGetFileInfo function. It returns an HICON handle to the icon.
+
+The GetInstalledSoftwareListWithIcons function retrieves a list of installed software along with their associated icons. It opens the Registry, reads the display name and executable path for each software, and retrieves the icon for the executable.
+
+You should replace "uninstall.exe" with the actual name of the executable file for the software, which may vary depending on the software.
+
+Icons retrieved using SHGetFileInfo should be cleaned up using DestroyIcon when they are no longer needed.
+
+This code is a simplified example, and you would need to implement the part that displays the software names and icons in a user interface, which may vary depending on the GUI library you are using.

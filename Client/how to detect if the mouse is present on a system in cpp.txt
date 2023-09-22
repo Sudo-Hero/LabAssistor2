@@ -1,0 +1,26 @@
+In C++, you can use the Windows API to detect whether a mouse is present on the system. Here's a basic example of how you can check for the presence of a mouse using the Windows API:
+
+cpp
+Copy code
+#include <windows.h>
+
+int main() {
+    if (GetSystemMetrics(SM_MOUSEPRESENT) != 0) {
+        // A mouse is present on the system
+        printf("A mouse is present on the system.\n");
+    } else {
+        // No mouse detected
+        printf("No mouse detected on the system.\n");
+    }
+
+    return 0;
+}
+In this example:
+
+We use the GetSystemMetrics function with the SM_MOUSEPRESENT parameter. This function retrieves system metrics information, and SM_MOUSEPRESENT specifically checks whether a mouse is present.
+
+If GetSystemMetrics(SM_MOUSEPRESENT) returns a non-zero value, it means that a mouse is present on the system.
+
+If GetSystemMetrics(SM_MOUSEPRESENT) returns 0, it means that no mouse is detected on the system.
+
+This method is a straightforward way to determine if a mouse is present, and it doesn't require any additional libraries or complex code.

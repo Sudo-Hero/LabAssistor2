@@ -1,0 +1,18 @@
+1. If table existes get values and allaow login
+1.1 Send the value for verification.
+2. If table does not existes ask for Activation key 
+2.1 Authenticate the user using the key
+2.2 Create the table with default value and store key
+2.3 
+
+---------------
+1. Check if table exists and get the values 
+2. Check the value against the file which holds the hash
+3. Allow login
+~2. If table exists but value is not matching
+3. Ask for activation key
+4. Check the activation key against the database(online)
+5. If the activation key is correct return true
+6. Create a hash and store in the file
+7. (Next time create the hash of the database value and compare it against file value(hash))
+~5. If it is incorrect return false
