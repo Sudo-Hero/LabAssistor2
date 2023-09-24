@@ -1,7 +1,8 @@
 Debug/
 Release/
 *.zip
-crypto880/
+cryptopp880/
 mysql-debug/
 mysql-release/
+hash/
 log*.txt
