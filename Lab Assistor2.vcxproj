@@ -86,14 +86,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STATIC_CONCPP;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\hash;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-debug\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql\lib\vs14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-debug\lib\vs14\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>mysqlcppconn-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -105,15 +105,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>STATIC_CONCPP;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\cryptopp;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\hash;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-release\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql\lib\vs14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mysqlcppconn-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\cryptopp\lib\Release;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-release\lib\vs14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cryptlib.lib;mysqlcppconn-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -145,14 +146,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="hash\sha256.cpp" />
     <ClCompile Include="Lab Assistor2.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MainApplication.cpp" />
-    <ClCompile Include="mysql_check.cpp" />
+    <ClCompile Include="mysql_conn.cpp" />
     <ClCompile Include="SignIn.cpp" />
+    <ClCompile Include="SignIn_Check.cpp" />
+    <ClCompile Include="ActivationBox.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActivationBox.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="hash\sha256.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="mysql_conn.h" />
     <ClInclude Include="SignIn.h" />

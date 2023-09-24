@@ -16,3 +16,8 @@
 6. Create a hash and store in the file
 7. (Next time create the hash of the database value and compare it against file value(hash))
 ~5. If it is incorrect return false
+
+~1. If table does not exists 
+2. Ask for token
+3. create sha256 hash store in license
+4. 

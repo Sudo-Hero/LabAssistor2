@@ -5,8 +5,8 @@
 #include "utils.h"
 //#include "Logger.h"
 #include "mysql_conn.h"
-
-
+#include "SignIn_Check.h"
+#include "ActivationBox.h"
 
 /***************************************************
 UI  :- Draw signin components
@@ -20,18 +20,24 @@ private:
 	HFONT hMontserrat;
 	HWND hMain,hEmail, hPassword;
 	RECT *rect;
-	sql::Connection* conn;
+	sql::Connection* conn = nullptr;
 	FileLogger *logger = nullptr;
-	bool isStarted = startMysqlConn(conn);
+	bool isStarted;
+	bool isActivated;
 	//Mysql Components 
-	
+	ActivationBox activationbox;
+	void askForToken();
 public:
 	//SignIn(const SignIn&) = delete;
 	SignIn() {
-		logger = new FileLogger("logger.txt");
-		if (!isStarted) {
+		conn = startMysqlConn();
+		logger = new FileLogger("log.txt");
+		if (!conn) {
 			logger->log("MYSQL Failed");
+			MessageBoxA(NULL, "MYSQL Failed", "Something went wrong", MB_ICONERROR | MB_OK);
+			PostQuitMessage(-1);
 		}
+		 
 	}
 	//Draw components
 	void Draw(HDC& hdc);
@@ -41,6 +47,11 @@ public:
 
 	void removeRect();
 	void setRect();
+
+
+	//Logic Part
+	void ActivationCheck();
+
 	~SignIn() {
 		DestroyWindow(hEmail);
 		DestroyWindow(hPassword);

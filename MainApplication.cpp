@@ -26,7 +26,7 @@ MainApplication::MainApplication(HINSTANCE hinstance, int CmdShow) :hInstance{ h
 	//InputBox zusername((HMENU)1, L"Username", WS_CHILD | WS_VISIBLE | WS_BORDER, 50, 50, 100, 100, hWnd);
 	//zusername.Draw();
 	signIn.DrawInputs(hWnd);
-	
+	signIn.ActivationCheck();
 }
 
 void MainApplication::Run() {

@@ -96,6 +96,23 @@ public:
 		delete _brush;
 	}
 };
+
+class BlueExLabel : public Label {
+
+public:
+	BlueExLabel() = delete;
+	BlueExLabel(const BlueExLabel&) = delete;
+	explicit BlueExLabel(float x, float y, const std::wstring& text, REAL size, FontStyle fontStyle)
+		:Label(x, y, text, size, fontStyle)
+	{
+
+		_brush = new SolidBrush(Color(0, 150, 255));
+	}
+	~BlueExLabel() {
+		delete _brush;
+	}
+};
+
 class DarkBlueLabel : public Label {
 
 public:
@@ -196,7 +213,8 @@ protected:
 	int _height = BTN_H, _width;
 	DWORD _id;
 	SolidBrush *_btnBrush = nullptr;
-	
+	FontStyle _textStyle;
+
 	float getXCenter() const;
 	float getYCenter() const;
 	void DrawBk(HDC hdc);
@@ -208,7 +226,7 @@ public:
 	explicit Button(DWORD id,std::wstring text, int x, int y)
 		:_id{ id },
 		_text{ text },
-		_x{ x}, 
+		_x{ x }, 
 		_y{y}
 	{
 		setWidth();
@@ -223,8 +241,8 @@ protected:
 public:
 	BlueButton() = delete;
 	BlueButton(const Button&) = delete;
-	explicit BlueButton(DWORD id, std::wstring text, int x, int y)
-		: Button(id, text, x, y), WhiteLabel( x + 10, y + 10,text, 16, FontStyleRegular) {
+	explicit BlueButton(DWORD id, std::wstring text, int x, int y, FontStyle textStyle = FontStyleRegular)
+		: Button(id, text, x, y), WhiteLabel( x + 10, y + 10,text, 16, textStyle) {
 		delete _btnBrush;
 		_btnBrush = new SolidBrush{ Color(0, 75, 255) };
 		
@@ -243,8 +261,8 @@ protected:
 public:
 	PaleButton() = delete;
 	PaleButton(const Button&) = delete;
-	explicit PaleButton(DWORD id, std::wstring text, int x, int y)
-		: Button(id, text, x, y), BlueLabel(x + 10, y + 10, text, 16, FontStyleRegular) {
+	explicit PaleButton(DWORD id, std::wstring text, int x, int y, FontStyle textStyle = FontStyleRegular)
+		: Button(id, text, x, y), BlueLabel(x + 10, y + 10, text, 16, textStyle) {
 		delete _btnBrush;
 		_btnBrush = new SolidBrush{ Color(215, 229, 240) };
 

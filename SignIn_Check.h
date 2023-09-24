@@ -1,7 +1,11 @@
 #ifndef _SIGNIN_CHECK_
 #define _SIGNIN_CHECK_
 
-#include "mysql_conn.h"
+#include <iostream>
+#include "SignIn.h"
+
+
+//vois SignIn::ActivationCheck(sql::Connection* con);
 
 
 
