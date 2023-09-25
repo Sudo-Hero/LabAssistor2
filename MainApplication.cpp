@@ -10,9 +10,11 @@
 
 SignIn signIn;
 
+bool MainApplication::loggedIn = false;
+
 MainApplication::MainApplication(HINSTANCE hinstance, int CmdShow) :hInstance{ hinstance } {
 	WNDCLASS wc = { 0 };
-	
+	MainApplication::loggedIn = false;
 	wc.hInstance = hInstance;
 	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wc.lpfnWndProc = MainApplication::WindowProc;
@@ -43,12 +45,31 @@ LRESULT CALLBACK MainApplication::WindowProc(HWND hwnd, UINT msg, WPARAM wparam,
 	
 	PAINTSTRUCT ps;
 	switch (msg) {
+	case WM_COMMAND:
+		if (HIWORD(wparam) == EN_SETFOCUS && LOWORD(wparam) == 1) {
+			wchar_t ch[2];
+			if (!GetWindowText(signIn.getEmailHWND(), ch, 1)) {
+				SetWindowText(signIn.getEmailHWND(), L"");
+			}
+		}
+		if (HIWORD(wparam) == EN_SETFOCUS && LOWORD(wparam) == 2) {
+			wchar_t ch[2];
+			if (!GetWindowText(signIn.getPassHWND(), ch, 1)) {
+				SetWindowText(signIn.getPassHWND(), L"");
+			}
+		}
+		break;
+
 	case WM_CREATE:
 		break;
 
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		signIn.Draw(hdc);
+		//if(signIn.isLo)
+		if (!signIn.getStatus()) {
+			MainApplication::loggedIn = true;
+			signIn.Draw(hdc);
+		}
 		
 		
 		EndPaint(hwnd, &ps);
@@ -104,4 +125,8 @@ LRESULT CALLBACK MainApplication::WindowProc(HWND hwnd, UINT msg, WPARAM wparam,
 		return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 	return 0;
+}
+
+HWND MainApplication::getHWND() const{
+	return hWnd;
 }

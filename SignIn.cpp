@@ -1,27 +1,11 @@
 #include "SignIn.h"
-
+#include "common.h"
 
 
 /*******************************************
 1. Have to make images clickable
 ********************************************/
-WNDPROC oldEditWndProc;
-LRESULT CALLBACK NewEditWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
-	switch (msg) {
-	case WM_SETFOCUS:
-		if(wparam != 0)
-		OutputDebugStringA("Window Activated\n");
-		InvalidateRect(hwnd, nullptr, TRUE);
-		break;
-	case WM_KILLFOCUS:
-		if (wparam != 0)
-		OutputDebugStringA("Window Killed\n");
-		InvalidateRect(hwnd, nullptr, TRUE);
-		break;
-	default:
-		return CallWindowProc(oldEditWndProc, hwnd, msg, wparam, lparam);
-	}
-}
+
 void SignIn::DrawBk(HDC& hdc) {
 	Graphics graphics(hdc);
 	Image bkGroundImg(L"Image\\SignIn.png");
@@ -85,10 +69,7 @@ void SignIn::DrawForum(HDC& hdc) {
 	line2.Draw(hdc);
 	graphics.DrawImage(&lockImg, 783, 228 + 50 +20, 25, 20);
 
-	ErrorLabel emailFormatError(814 - 30, 305 + 30, L"Incorrect Email Format", 12, FontStyleRegular);
-	emailFormatError.Draw(hdc);//Please check the password, account case and email suffix correctness
-
-	BlueButton login(1, L"                      Login", 814 - 30, 305 + 50 + 20);
+	BlueButton login(1, L"                      Login", 814 - 40, 305 + 70 + 20);
 	login.DrawBtn(hdc);
 
 	rect[2] = RECT(login.getRect());
@@ -102,6 +83,7 @@ void SignIn::DrawInputs(HWND& hwnd) {
 	std::wstring emailText = L"Enter Email";
 	InputBox email((HMENU)1, emailText, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 781 + 30, 225, 28, 273, hMain);//Y - Sign In Label + 45
 	email.Draw();
+	hEmail = email.getHWND();
 	if (AddFontResource(L"Font\\Montserrat-Regular.ttf") == 0) {
 		// Handle the error if font loading fails
 		// You can use GetLastError() to get the specific error code
@@ -124,12 +106,11 @@ void SignIn::DrawInputs(HWND& hwnd) {
 		L"Montserrat Regular"     // Font name (use the actual font name)
 	);
 	
-	oldEditWndProc = (WNDPROC)SetWindowLongPtr(email.getHWND(), GWLP_WNDPROC, (LONG_PTR)NewEditWndProc);
 	SendMessage(email.getHWND(), WM_SETFONT, (WPARAM)hMontserrat, TRUE);
 	std::wstring PassText = L"Enter Email";
-	InputBox password((HMENU)1, emailText, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | ES_PASSWORD, 781 + 30, 225 + 70, 28, 273, hMain);//Y - Sign In Label + 45
+	InputBox password((HMENU)2, emailText, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | ES_PASSWORD, 781 + 30, 225 + 70, 28, 273, hMain);//Y - Sign In Label + 45
 	password.Draw();
-
+	hPassword = password.getHWND();
 	SendMessage(password.getHWND(), WM_SETFONT, (WPARAM)hMontserrat, TRUE);
 
 }
@@ -174,11 +155,37 @@ void SignIn::checkForClick(int xPos, int yPos) {
 	}
 	//Click on Login
 	if (PtInRect(&rect[2], { xPos, yPos })) {
+		char emailtext[MAX_EMAIL_LEN];
+		GetWindowTextA(hEmail, emailtext, MAX_EMAIL_LEN);
+		std::string email(emailtext);
+		removeTrailingSpaces(email);
+		if (!checkEmailFormat(email)) {
+			MessageBoxA(NULL, "Incorrect email format", "Incorrect Details", MB_OK | MB_ICONERROR);
+			//SInvalidateRect()
+			return;
+		}
+
+		char passtext[MAX_EMAIL_LEN];
+		GetWindowTextA(hPassword, passtext, MAX_EMAIL_LEN);
+		std::string password(passtext);
+		if (!checkDetails(email, password)) {
+			MessageBoxA(NULL, "Please enter vaild email and password", "Incorrect details", MB_OK | MB_ICONERROR);
+			return;
+		}
 		MessageBoxA(NULL, "Signup Prompt", "Signing up", MB_OK | MB_ICONINFORMATION);
 	}
 	//Click on SignUp
 	if (PtInRect(&rect[3], { xPos, yPos })) {
-		MessageBoxA(NULL, "Signup Prompt", "Signing up", MB_OK | MB_ICONINFORMATION);
+		const wchar_t* url = L"http://localhost/CWms/users/register.php";
+
+		HINSTANCE result = ShellExecute(nullptr, L"open", url, nullptr, nullptr, SW_SHOWNORMAL);
+
+		if ((intptr_t)result > 32) {
+			std::cout << "Webpage opened successfully." << std::endl;
+		}
+		else {
+			std::cout << "Failed to open webpage." << std::endl;
+		}
 	}
 }
 
@@ -202,4 +209,12 @@ void SignIn::setRect() {
 
 void SignIn::removeRect() {
 	delete[] rect;
+}
+
+HWND SignIn::getEmailHWND() const{
+	return hEmail;
+}
+
+HWND SignIn::getPassHWND() const{
+	return hPassword;
 }

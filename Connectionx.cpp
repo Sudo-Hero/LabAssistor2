@@ -1,5 +1,4 @@
 #include "Connection.h"
-#include <sstream>
 
 FileLogger logger("logger.txt");
 
@@ -39,30 +38,22 @@ bool Connection::Connect() {
 			logger.log("Couldn't translate address: " + std::to_string(WSAGetLastError()));
 			return false;
 		}
-		if (connect(_socket, results->ai_addr, (int)results->ai_addrlen) == SOCKET_ERROR) {
+		if (connect(_socket, results->ai_addr, (int)results->ai_addrlen)) {
 			freeaddrinfo(results);
 			logger.log("Couldn't connect to the server: " + std::to_string(WSAGetLastError()));
 			return false;
 		}
 		freeaddrinfo(results);
-		isConnected = true;
 		return true;
 	}
-	catch (std::exception e) {
+	catch (...) {
 		logger.log("Exception while sending data: " + std::to_string(WSAGetLastError()));
-		logger.log(e.what());
 		return false;
 	}
 }
 
 int Connection::SendData(std::string senddata) {
 	try {
-		if (!isConnected) {
-			logger.log("Not Connected: " + std::to_string(WSAGetLastError()));
-			logger.log("Server: " + _server);
-			logger.log("Port: " + _port);
-			return -1;
-		}
 		const char* f= "sd ";
 		std::string dd = "sd";
 		dd.assign(f);
@@ -75,9 +66,8 @@ int Connection::SendData(std::string senddata) {
 		}
 		return bytesent;
 	}
-	catch (std::exception e) {
+	catch (...) {
 		logger.log("Exception while sending data: " + std::to_string(WSAGetLastError()));
-		logger.log(e.what());
 		logger.log("Server: " + _server);
 		logger.log("Port: " + _port);
 		return -1;
@@ -87,12 +77,6 @@ int Connection::SendData(std::string senddata) {
 
 int Connection::ReceiveData(std::string& receivedData) {
 	try {
-		if (!isConnected) {
-			logger.log("Not Connected: " + std::to_string(WSAGetLastError()));
-			logger.log("Server: " + _server);
-			logger.log("Port: " + _port);
-			return -1;
-		}
 		char buffer[1024];
 		int bytesRead = recv(_socket, buffer, sizeof(buffer), 0);
 		if (bytesRead == SOCKET_ERROR) {
@@ -106,33 +90,10 @@ int Connection::ReceiveData(std::string& receivedData) {
 		receivedData.assign(buffer, bytesRead);
 		return bytesRead;
 	}
-	catch (std::exception e) {
+	catch (...) {
 		logger.log("Exception while receiving  data: " + std::to_string(WSAGetLastError()));
-		logger.log(e.what());
 		logger.log("Server: " + _server);
 		logger.log("Port: " + _port);
 		return -1;
 	}
 }
-
-
-std::string Connection::ParseData(std::string& receivedData) {
-	size_t bodyStart = receivedData.find("\r\n\r\n");
-	if (bodyStart != std::string::npos) {
-		bodyStart += 4; // Move past the empty line
-		std::string responseBody = receivedData.substr(bodyStart);
-		return responseBody;
-	}
-	else {
-		std::cerr << "No response body found" << std::endl;
-	}
-}
-
-std::string Connection::getServer() const{
-	return _server;
-}
-
-std::string Connection::getPort() const{
-	return _port;
-}
-

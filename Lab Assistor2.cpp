@@ -2,6 +2,7 @@
 #include <gdiplus.h>
 #include <iostream>
 #include "Logger.h"
+#include "Panel.h"
 
 #pragma comment (lib,"Gdiplus.lib")
 
@@ -35,7 +36,13 @@ int WINAPI wWinMain(HINSTANCE hinstance, HINSTANCE hPrevinstance, PWSTR CmdLine,
 	GdiplusStartup(&token, &GdiInput, NULL);
 	MainApplication app(hinstance, CmdShow);
 	app.Run();
+    if (MainApplication::loggedIn == true) {
+       //Run the panel
+        //DestroyWindow(app.getHWND());
+        Panel panel(hinstance, CmdShow);
+        panel.Run();
+    }
     CloseHandle(hMutex);
-	GdiplusShutdown(token);
+    GdiplusShutdown(token);
 	return 0;
 }

@@ -105,16 +105,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>STATIC_CONCPP;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\cryptopp;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\hash;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-release\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\hash;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-release\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\cryptopp\lib\Release;C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-release\lib\vs14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cryptlib.lib;mysqlcppconn-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\sudoh\source\repos\Lab Assistor2\Lab Assistor2\mysql-release\lib\vs14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mysqlcppconn-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -146,22 +145,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Activation.cpp" />
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="des\DES.cpp" />
+    <ClCompile Include="des\_DES.cpp" />
     <ClCompile Include="hash\sha256.cpp" />
     <ClCompile Include="Lab Assistor2.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MainApplication.cpp" />
     <ClCompile Include="mysql_conn.cpp" />
+    <ClCompile Include="Panel.cpp" />
     <ClCompile Include="SignIn.cpp" />
     <ClCompile Include="SignIn_Check.cpp" />
     <ClCompile Include="ActivationBox.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Activation.h" />
     <ClInclude Include="ActivationBox.h" />
+    <ClInclude Include="Connection.h" />
+    <ClInclude Include="des\DES.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="hash\sha256.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="PanelGUI.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="mysql_conn.h" />
+    <ClInclude Include="Panel.h" />
     <ClInclude Include="SignIn.h" />
     <ClInclude Include="SignIn_Check.h" />
     <ClInclude Include="utils.h" />

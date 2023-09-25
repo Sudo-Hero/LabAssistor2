@@ -1,5 +1,5 @@
 #include "mysql_conn.h"
-
+#include "common.h"
 
 sql::Connection* con;
 /*
@@ -9,9 +9,11 @@ sql::PreparedStatement* pstmt;
 sql::Connection* startMysqlConn() {
 	sql::Connection* connx;
 	FileLogger logger("log.txt");
-	const string server = "tcp://localhost:3306";
-	const string username = "root";
-	const string password = "1122";
+	string servertemp, porttemp,usernametemp, passwordtemp;
+	readConfigMYSQL("mysql.ini", &servertemp, &porttemp, &usernametemp, &passwordtemp);
+	const string server = "tcp://"+ servertemp +":" + porttemp;
+	const string username = usernametemp;
+	const string password = passwordtemp;
 	sql::Driver* driver;
 	try
 	{

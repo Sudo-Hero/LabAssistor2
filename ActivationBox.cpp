@@ -1,6 +1,8 @@
 #include "ActivationBox.h"
 #include "utils.h"
 #include "Font.h"
+#include "Activation.h"
+#include <string>
 
 #define BLUISH_WHITE RGB(244, 245, 255)
 
@@ -104,27 +106,15 @@ void ActivationBox::CreateAcivationWindow(HWND& hParentwnd) {
     hMain = hParentwnd;
     hwndDlg = CreateWindow(wc.lpszClassName, L"", WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 900, 500, hMain, NULL, NULL, NULL);
     buttons.DrawInputs(hwndDlg);
-    //HWND hHead = CreateWindow(L"Static", L"Activate License", WS_VISIBLE | WS_CHILD, 20, 20, 500, 700, hwndDlg, NULL, NULL, NULL);
-    //SetFont(hHead, 30, Style::Bold);
-    //Finish.DrawBtn(hdc);
 
-    //HWND hProductKey = CreateWindow(, L"", , );
-    //ShowWindow(hwndDlg, SW_SHOW);
 }
 
 void ActivationBoxAct::DrawButtons(HDC & hdc) {
-    /*
-    hSubmitKey = CreateWindow(L"Button", L"Submit Key", WS_VISIBLE | WS_CHILD, 20, 20 + 30 + 50 + 20 + 50 + 20 + 70 + 30 + 70, 130, 40, hParentDlg, (HMENU)2, NULL, NULL);
-    SetFont(hSubmitKey, 22, Style::Bold);
-
-    hFinish = CreateWindow(L"Button", L"Finish", WS_VISIBLE | WS_CHILD, 20 + 300, 20 + 30 + 50 + 20 + 50 + 20 + 70 + 30 + 70, 130, 40, hParentDlg, (HMENU) 1, NULL, NULL);
-    SetFont(hFinish, 22, Style::Bold);
-    */
     BlueExLabel header(20, 20, L"Activate License", 30, FontStyleBold);
     BlueLabel details1(20, 20 + 30 + 50, L"Your product key should be displayed in the LabAssistor account you can login into your account ", 16, FontStyleBold);
     BlueLabel details2(20, 20 + 30 + 50 + 20, L"and paste the key here.", 16, FontStyleBold);
     BlueLabel details3(20, 20 + 30 + 50 + 20 + 50, L"The produt key looks similar to this:", 16, FontStyleBold);
-    BlueLabel details4(20, 20 + 30 + 50 + 20 + 50 + 20, L"PRODUCT KEY: A5AS-5A64-A464-AD66", 16, FontStyleBold);
+    BlueLabel details4(20, 20 + 30 + 50 + 20 + 50 + 20, L"PRODUCT KEY: XXXX-XXXX-XXXX-XXXX", 16, FontStyleBold);
     BlueLabel label(20, 20 + 30 + 50 + 20 + 50 + 20 + 70, L"Product Key", 16, FontStyleBold);
 
     header.Draw(hdc);
@@ -157,9 +147,21 @@ void ActivationBoxAct::DrawInputs(HWND & hParentDlg) {
 void ActivationBoxAct::checkForClick(int xPos, int yPos) {
     //Click on Submit
     if (PtInRect(&rect[0], { xPos, yPos })) {
-        wchar_t prodyctKey[19];
-        GetWindowText(buttons.getProdctKeyHandle(), prodyctKey, 19);
-        MessageBox(NULL, prodyctKey, L"Submit", MB_OK | MB_ICONINFORMATION);
+        char productKey[20];
+        GetWindowTextA(buttons.getProdctKeyHandle(), productKey, 20);
+        int len = std::strlen(productKey);
+        if (len != 19) {
+            MessageBoxA(NULL, "Please enter valid key", "Submit", MB_OK | MB_ICONINFORMATION);
+            MessageBoxA(NULL, productKey, "Submit", MB_OK | MB_ICONINFORMATION);
+            MessageBoxA(NULL, std::to_string(std::strlen(productKey)).c_str(), "asd", MB_OK | MB_ICONINFORMATION);
+        }
+        else {
+            MessageBoxA(NULL, "Checking key please wait", "Submit", MB_OK | MB_ICONINFORMATION);
+            if (!submitKey(productKey)) {
+                MessageBoxA(NULL, "Please enter valid key", "Submit", MB_OK | MB_ICONINFORMATION);
+            }
+        }
+        
     }
     //Click on Finish
     if (PtInRect(&rect[1], { xPos, yPos })) {
